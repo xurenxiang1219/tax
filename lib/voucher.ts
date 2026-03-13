@@ -55,12 +55,13 @@ export async function generatePaymentVoucher(
     throw new Error('报销事项不存在');
   }
 
-  // 将数据库返回的发票转换为聚合器期望的格式
-  // 数据库中的 category 已经是有效的分类值
-  const invoices = item.invoices.map(invoice => ({
-    amount: invoice.amount,
-    category: invoice.category as any,
-  }));
+  // 过滤掉没有金额的发票，转换为聚合器期望的格式
+  const invoices = item.invoices
+    .filter(invoice => invoice.amount != null)
+    .map(invoice => ({
+      amount: invoice.amount as number,
+      category: invoice.category as any,
+    }));
 
   const summary = calculateByCategory(invoices);
   const subtotal = calculateTotal(invoices);

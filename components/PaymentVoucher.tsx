@@ -92,7 +92,6 @@ export function PaymentVoucher({ itemId }: PaymentVoucherProps) {
         if (!response.ok) throw new Error('加载支付证明单失败');
         
         const data = await response.json();
-        console.log("data is: ", data)
         setVoucher(data);
       } catch (error) {
         setError(error instanceof Error ? error.message : '加载失败');
@@ -158,7 +157,7 @@ export function PaymentVoucher({ itemId }: PaymentVoucherProps) {
             支 付 证 明 单
           </h1>
           <div style={{ 
-            width: '65%',
+            width: '50%',
             margin: '0 auto',
             position: 'relative'
           }}>
@@ -174,9 +173,9 @@ export function PaymentVoucher({ itemId }: PaymentVoucherProps) {
 
         {/* 第一行：日期和财务编号 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', ...STYLES.smallText }}>
-          <div>
-            <span style={{ fontWeight: 'bold' }}>日期：</span>
-            <span>{formatDate(voucher.date) || '2026 年 3 月 1 日'}</span>
+          <div >
+            <span style={{ fontWeight: 'bold' }}>日期：&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span style={{ fontWeight: 'bold' }}>{formatDate(voucher.date) || '2026 年 3 月 1 日'}</span>
           </div>
           <div>
             <span>财务 第</span>
@@ -197,9 +196,9 @@ export function PaymentVoucher({ itemId }: PaymentVoucherProps) {
             <span style={{ 
               ...STYLES.underlineInput,
               minWidth: '150px',
-              marginLeft: '5px'
+              marginLeft: '5px',
             }}>
-              {voucher.department}
+              {voucher.department}&nbsp;
             </span>
           </div>
           <div>
@@ -389,7 +388,7 @@ export function PaymentVoucher({ itemId }: PaymentVoucherProps) {
             {renderFinanceSignature('财务主管：', '120px')}
             {renderFinanceSignature('会计：', '120px')}
             {renderFinanceSignature('出纳：', '120px')}
-            {renderFinanceSignature('中国部中央专业部门及财务总裁：', '100%', '1')}
+            {renderFinanceSignature('中国部中央专业部门及财务总裁：', '80%', '1')}
           </div>
         </div>
 
@@ -486,7 +485,8 @@ const renderSignatureLine = (height: string) => (
   <div style={{ 
     borderBottom: '1px solid black',
     height,
-    marginTop: '5px'
+    marginLeft: '5px',
+    width: '80%'
   }}></div>
 );
 
@@ -556,7 +556,7 @@ const renderUnderlineField = (label: string, value: string) => (
       flex: 1,
       marginLeft: '5px'
     }}>
-      {value}
+      {value}&nbsp;
     </span>
   </div>
 );
@@ -575,6 +575,7 @@ const renderFinanceSignature = (label: string, width: string, flex: string = '0 
     <div style={{ 
       ...STYLES.underlineInput,
       width,
+      marginLeft: '5px',
       height: '30px'
     }}></div>
   </div>

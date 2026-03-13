@@ -41,6 +41,7 @@ function formatVoucherResponse(voucher: any) {
  * GET /api/voucher/:id - 获取支付证明单数据
  * 
  * 如果支付证明单不存在，则自动生成
+ * 如果支付证明单存在但金额为0且有发票，则重新生成
  */
 export async function GET(
   _request: NextRequest,
@@ -51,6 +52,7 @@ export async function GET(
 
     const item = await prisma.reimbursementItem.findUnique({
       where: { id },
+      include: { invoices: true },
     });
 
     if (!item) {
@@ -61,31 +63,48 @@ export async function GET(
       where: { reimbursementItemId: id },
     });
 
-    if (!voucher) {
+    // 如果支付证明单不存在，或者金额为0但有发票，则重新生成
+    const shouldRegenerate = !voucher || (voucher.total === 0 && item.invoices.length > 0);
+
+    if (shouldRegenerate) {
       const voucherData = await generatePaymentVoucher(id);
       
-      voucher = await prisma.paymentVoucher.create({
-        data: {
-          reimbursementItemId: id,
-          date: voucherData.date,
-          department: voucherData.department,
-          paymentMethod: voucherData.paymentMethod,
-          payeeName: voucherData.payeeName,
-          bankName: voucherData.bankName,
-          bankAccount: voucherData.bankAccount,
-          transportation: voucherData.summary.transportation,
-          meals: voucherData.summary.meals,
-          accommodation: voucherData.summary.accommodation,
-          office: voucherData.summary.office,
-          other: voucherData.summary.other,
-          subtotal: voucherData.subtotal,
-          tax: voucherData.tax,
-          total: voucherData.total,
-          totalInChinese: voucherData.totalInChinese,
-          approvals: JSON.stringify(voucherData.approvals),
-          notes: voucherData.notes,
-        },
-      });
+      // 准备要保存的金额数据
+      const amountData = {
+        transportation: voucherData.summary.transportation,
+        meals: voucherData.summary.meals,
+        accommodation: voucherData.summary.accommodation,
+        office: voucherData.summary.office,
+        other: voucherData.summary.other,
+        subtotal: voucherData.subtotal,
+        tax: voucherData.tax,
+        total: voucherData.total,
+        totalInChinese: voucherData.totalInChinese,
+      };
+      
+      if (voucher) {
+        // 更新现有支付证明单的金额
+        voucher = await prisma.paymentVoucher.update({
+          where: { reimbursementItemId: id },
+          data: amountData,
+        });
+      } else {
+        // 创建新支付证明单
+        voucher = await prisma.paymentVoucher.create({
+          data: {
+            reimbursementItemId: id,
+            date: voucherData.date,
+            department: voucherData.department,
+            paymentMethod: voucherData.paymentMethod,
+            payeeName: voucherData.payeeName,
+            bankName: voucherData.bankName,
+            bankAccount: voucherData.bankAccount,
+            ...amountData,
+            approvals: JSON.stringify(voucherData.approvals),
+            notes: voucherData.notes,
+          },
+        });
+      }
     }
 
     return successResponse(formatVoucherResponse(voucher));
