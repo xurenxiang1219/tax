@@ -29,13 +29,16 @@ export async function GET(
       return ApiError.notFound('发票文件不存在');
     }
 
-    const headers = new Headers({
-      'Content-Type': invoice.fileType,
-      'Content-Length': (invoice.fileSize || fileBuffer.length).toString(),
-      'Content-Disposition': `inline; filename*=UTF-8''${encodeURIComponent(invoice.fileName)}`,
-      'Cache-Control': 'public, max-age=31536000, immutable',
-      'ETag': `"${invoice.id}-${invoice.updatedAt || new Date().toISOString()}"`,
-    });
+    // 使用 .set() 方法设置 headers，避免 Content-Disposition 和 ETag 中的非 ASCII 字符导致错误
+    const headers = new Headers();
+    headers.set('Content-Type', invoice.fileType);
+    headers.set('Content-Length', (invoice.fileSize ?? fileBuffer.length).toString());
+    headers.set('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(invoice.fileName)}`);
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    
+    // 使用时间戳确保 ETag 只包含 ASCII 字符
+    const updatedTime = invoice.updatedAt ? new Date(invoice.updatedAt).getTime() : Date.now();
+    headers.set('ETag', `"${invoice.id}-${updatedTime}"`);
 
     return new Response(new Uint8Array(fileBuffer), { status: 200, headers });
   } catch (error) {

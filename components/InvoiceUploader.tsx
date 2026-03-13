@@ -325,18 +325,14 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload size={20} />
-          上传发票
-        </CardTitle>
+    <Card className="border-l-2 border-l-orange-500">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">上传发票</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* 上传区域 */}
+      <CardContent className="space-y-3">
         <div
           className={`
-            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors duration-200
+            border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
             ${isDragOver 
               ? 'border-blue-500 bg-blue-50' 
               : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -347,19 +343,18 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
           onDrop={handleDrop}
           onClick={handleClick}
         >
-          <Upload size={48} className={`mx-auto mb-4 ${isDragOver ? 'text-blue-500' : 'text-gray-400'}`} />
-          <p className="text-lg font-medium text-gray-900 mb-2">
-            {isDragOver ? '释放文件开始上传' : '点击选择文件或拖拽到此处'}
+          <Upload size={36} className={`mx-auto mb-2 ${isDragOver ? 'text-blue-500' : 'text-gray-400'}`} />
+          <p className="text-sm font-medium text-gray-900 mb-1">
+            {isDragOver ? '释放文件开始上传' : '点击选择或拖拽文件'}
           </p>
-          <p className="text-sm text-gray-600 mb-4">
-            支持 PDF、JPEG、PNG 格式，单个文件最大 10MB
+          <p className="text-xs text-gray-600 mb-3">
+            支持 PDF、JPEG、PNG，最大 10MB
           </p>
-          <Button variant="outline" type="button">
+          <Button variant="outline" type="button" size="sm">
             选择文件
           </Button>
         </div>
 
-        {/* 隐藏的文件输入 */}
         <input
           ref={fileInputRef}
           type="file"
@@ -369,12 +364,11 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
           className="hidden"
         />
 
-        {/* 文件列表 */}
         {uploadFiles.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="font-medium text-gray-900">
-                待上传文件 ({uploadFiles.length})
+              <h4 className="text-sm font-medium text-gray-900">
+                待上传 ({uploadFiles.length})
               </h4>
               <div className="flex gap-2">
                 <Button
@@ -389,67 +383,65 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
                   variant="outline"
                   onClick={() => setUploadFiles([])}
                 >
-                  清空列表
+                  清空
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {uploadFiles.map((uploadFile) => (
                 <div
                   key={uploadFile.id}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center gap-2 p-2 bg-gray-50 rounded-md text-sm"
                 >
-                  {/* 文件图标 */}
                   <div className="flex-shrink-0">
                     {getFileIcon(uploadFile.file.type)}
                   </div>
 
-                  {/* 文件信息 */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-xs font-medium text-gray-900 truncate">
                       {uploadFile.file.name}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-500">
                       {(uploadFile.file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
 
-                  {/* 状态和进度 */}
                   <div className="flex-1 min-w-0">
                     {uploadFile.status === 'uploading' ? (
                       <>
-                        <p className="text-sm text-blue-600">
-                          上传中 {uploadFile.progress}%
+                        <p className="text-xs text-blue-600 mb-0.5">
+                          {uploadFile.progress}%
                         </p>
-                        <Progress value={uploadFile.progress} className="mt-1" />
+                        <Progress value={uploadFile.progress} className="h-1" />
                       </>
                     ) : (
-                      <p className={`text-sm ${getStatusInfo(uploadFile).color}`}>
+                      <p className={`text-xs ${getStatusInfo(uploadFile).color}`}>
                         {getStatusInfo(uploadFile).text}
                       </p>
                     )}
                   </div>
 
-                  {/* 操作按钮 */}
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     {uploadFile.status === 'pending' && (
                       <Button
                         size="sm"
                         onClick={() => handleUpload(uploadFile.id)}
+                        className="h-7 text-xs"
                       >
                         上传
                       </Button>
                     )}
                     {uploadFile.status === 'success' && (
-                      <CheckCircle size={20} className="text-green-600" />
+                      <CheckCircle size={16} className="text-green-600" />
                     )}
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => removeFile(uploadFile.id)}
+                      className="h-7 w-7 p-0"
                     >
-                      <X size={16} />
+                      <X size={14} />
                     </Button>
                   </div>
                 </div>
@@ -458,22 +450,21 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
           </div>
         )}
 
-        {/* 重复文件警告 */}
         {uploadFiles.some(f => f.status === 'duplicate-warning') && (
           <div className="space-y-2">
             {uploadFiles
               .filter(f => f.status === 'duplicate-warning')
               .map((uploadFile) => (
-                <Alert key={uploadFile.id} variant="warning">
-                  <AlertTriangle size={16} />
-                  <AlertTitle>检测到可能重复的文件</AlertTitle>
-                  <AlertDescription>
-                    <p className="mb-2">
-                      文件 "{uploadFile.file.name}" 可能与已上传的发票重复：
+                <Alert key={uploadFile.id} className="py-2">
+                  <AlertTriangle size={14} />
+                  <AlertTitle className="text-sm">可能重复</AlertTitle>
+                  <AlertDescription className="text-xs">
+                    <p className="mb-1">
+                      "{uploadFile.file.name}" 可能与已上传的发票重复
                     </p>
                     {uploadFile.duplicateInvoice && (
-                      <p className="text-sm mb-3">
-                        已存在文件：{uploadFile.duplicateInvoice.fileName}
+                      <p className="mb-2 text-gray-600">
+                        已存在：{uploadFile.duplicateInvoice.fileName}
                       </p>
                     )}
                     <div className="flex gap-2">
@@ -481,6 +472,7 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
                         size="sm"
                         variant="outline"
                         onClick={() => continueUpload(uploadFile.id)}
+                        className="h-7 text-xs"
                       >
                         继续上传
                       </Button>
@@ -488,8 +480,9 @@ export function InvoiceUploader({ itemId }: InvoiceUploaderProps) {
                         size="sm"
                         variant="ghost"
                         onClick={() => removeFile(uploadFile.id)}
+                        className="h-7 text-xs"
                       >
-                        取消上传
+                        取消
                       </Button>
                     </div>
                   </AlertDescription>

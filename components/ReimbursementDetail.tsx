@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Edit, Save, X, Receipt } from 'lucide-react';
+import { Edit, Save, X, Receipt, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -189,16 +189,8 @@ export function ReimbursementDetail({ itemId }: ReimbursementDetailProps) {
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900">报销事项详情</h2>
-            <p className="text-gray-600 mt-1">查看和管理发票信息</p>
-          </div>
-        </div>
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
-          <p className="text-sm">{error}</p>
-        </div>
+      <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
+        <p className="text-sm">{error}</p>
       </div>
     );
   }
@@ -206,74 +198,79 @@ export function ReimbursementDetail({ itemId }: ReimbursementDetailProps) {
   const summary = calculateSummary();
 
   return (
-    <div className="space-y-6">
-      {/* 头部操作区 */}
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900">报销事项详情</h2>
-            <p className="text-gray-600 mt-1">查看和管理发票信息</p>
-          </div>
-        </div>
-        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push('/')}
+          className="h-8 -ml-2"
+        >
+          <ChevronLeft size={16} className="mr-1" />
+          返回列表
+        </Button>
         {!editing && (
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Button 
               variant="outline"
               onClick={() => router.push(`/voucher/${itemId}`)}
+              size="sm"
             >
-              <Receipt size={16} className="mr-2" />
+              <Receipt size={14} className="mr-1.5" />
               支付证明单
             </Button>
-            <Button onClick={handleStartEdit}>
-              <Edit size={16} className="mr-2" />
+            <Button onClick={handleStartEdit} size="sm">
+              <Edit size={14} className="mr-1.5" />
               编辑
             </Button>
           </div>
         )}
       </div>
 
-      {/* 基本信息卡片 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>基本信息</CardTitle>
+      <Card className="border-l-2 border-l-blue-500">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">基本信息</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {editing ? (
             <>
-              <div className="space-y-2">
-                <Label htmlFor="edit-title">标题 *</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-title" className="text-sm">标题 *</Label>
                 <Input
                   id="edit-title"
                   value={editForm.title}
                   onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="请输入报销事项标题"
+                  className="h-9"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-notes">备注</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-notes" className="text-sm">备注</Label>
                 <Textarea
                   id="edit-notes"
                   value={editForm.notes}
                   onChange={(e) => setEditForm(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="请输入备注信息（可选）"
-                  rows={3}
+                  placeholder="选填"
+                  rows={2}
+                  className="text-sm"
                 />
               </div>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-2 pt-2 border-t">
                 <Button
                   variant="outline"
                   onClick={handleCancelEdit}
                   disabled={saving}
+                  size="sm"
                 >
-                  <X size={16} className="mr-2" />
+                  <X size={14} className="mr-1.5" />
                   取消
                 </Button>
                 <Button
                   onClick={handleSaveEdit}
                   disabled={!editForm.title.trim() || saving}
+                  size="sm"
                 >
-                  <Save size={16} className="mr-2" />
+                  <Save size={14} className="mr-1.5" />
                   {saving ? '保存中...' : '保存'}
                 </Button>
               </div>
@@ -281,25 +278,25 @@ export function ReimbursementDetail({ itemId }: ReimbursementDetailProps) {
           ) : (
             <>
               <div>
-                <Label>标题</Label>
-                <p className="text-gray-900 mt-1">{currentItem.title}</p>
+                <Label className="text-xs text-gray-500">标题</Label>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">{currentItem.title}</p>
               </div>
               {currentItem.notes && (
                 <div>
-                  <Label>备注</Label>
-                  <p className="text-gray-900 mt-1 whitespace-pre-wrap">{currentItem.notes}</p>
+                  <Label className="text-xs text-gray-500">备注</Label>
+                  <p className="text-sm text-gray-900 mt-0.5 whitespace-pre-wrap">{currentItem.notes}</p>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t text-xs">
                 <div>
-                  <Label>创建时间</Label>
-                  <p className="text-gray-900 mt-1">
+                  <Label className="text-gray-500">创建时间</Label>
+                  <p className="text-gray-900 mt-0.5">
                     {new Date(currentItem.createdAt).toLocaleString('zh-CN')}
                   </p>
                 </div>
                 <div>
-                  <Label>更新时间</Label>
-                  <p className="text-gray-900 mt-1">
+                  <Label className="text-gray-500">更新时间</Label>
+                  <p className="text-gray-900 mt-0.5">
                     {new Date(currentItem.updatedAt).toLocaleString('zh-CN')}
                   </p>
                 </div>
@@ -309,13 +306,8 @@ export function ReimbursementDetail({ itemId }: ReimbursementDetailProps) {
         </CardContent>
       </Card>
 
-      {/* 金额汇总 */}
       <AmountSummary total={summary.total} byCategory={summary.byCategory} />
-
-      {/* 发票上传 */}
       <InvoiceUploader itemId={itemId} />
-
-      {/* 发票列表 */}
       <InvoiceList invoices={currentItem.invoices || []} />
     </div>
   );

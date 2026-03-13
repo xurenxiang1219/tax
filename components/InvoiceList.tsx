@@ -472,14 +472,13 @@ export function InvoiceList({
   if (!invoices || invoices.length === 0) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>发票列表</CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">发票列表</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-            <FileText size={48} className="mb-4 text-gray-300" />
-            <p className="text-lg font-medium mb-2">暂无发票</p>
-            <p className="text-sm">请先上传发票文件</p>
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <FileText size={48} className="mb-3 text-gray-300" />
+            <p className="text-sm">暂无发票，请先上传</p>
           </div>
         </CardContent>
       </Card>
@@ -487,15 +486,15 @@ export function InvoiceList({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+    <Card className="border-l-2 border-l-purple-500">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center justify-between">
           <span>发票列表</span>
-          <Badge variant="secondary">{invoices.length} 张发票</Badge>
+          <Badge variant="secondary" className="text-xs">{invoices.length} 张</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {invoices.map((invoice) => (
             <InvoiceCard
               key={invoice.id}

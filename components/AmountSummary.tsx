@@ -82,22 +82,18 @@ interface CategoryItemProps {
 
 function CategoryItem({ category, amount }: CategoryItemProps) {
   const config = CATEGORY_CONFIG[category];
-  
-  // 如果金额为 0，使用较淡的样式
   const isZero = amount === 0;
   
   return (
-    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-      <div className="flex items-center gap-2">
-        <Badge 
-          className={`${config.bgColor} ${config.color} ${isZero ? 'opacity-50' : ''}`}
-        >
-          {config.label}
-        </Badge>
-      </div>
-      <div className={`font-medium ${isZero ? 'text-gray-400' : 'text-gray-900'}`}>
+    <div className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+      <Badge 
+        className={`${config.bgColor} ${config.color} ${isZero ? 'opacity-50' : ''} text-xs`}
+      >
+        {config.label}
+      </Badge>
+      <span className={`font-medium ${isZero ? 'text-gray-400' : 'text-gray-900'}`}>
         {formatAmount(amount)}
-      </div>
+      </span>
     </div>
   );
 }
@@ -133,45 +129,32 @@ export function AmountSummary({ total, byCategory, loading = false }: AmountSumm
   const hasAnyAmount = total > 0;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Calculator size={20} />
-            金额汇总
-          </div>
+    <Card className="border-l-2 border-l-green-500">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center justify-between">
+          <span>金额汇总</span>
           {hasAnyAmount && (
-            <Badge variant="secondary" className="text-xs">
-              {categoriesWithAmount} 个分类
-            </Badge>
+            <Badge variant="secondary" className="text-xs">{categoriesWithAmount} 个分类</Badge>
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* 总金额显示 */}
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <CardContent className="space-y-4">
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Receipt size={20} className="text-blue-600" />
-              <span className="text-lg font-semibold text-blue-900">总金额</span>
-            </div>
-            <div className="text-2xl font-bold text-blue-900">
-              {formatAmount(total)}
-            </div>
+            <span className="text-sm font-medium text-blue-900">总金额</span>
+            <span className="text-xl font-bold text-blue-900">{formatAmount(total)}</span>
           </div>
         </div>
 
-        {/* 分类汇总 */}
-        <div className="space-y-3">
-          <h4 className="font-medium text-gray-900 text-sm">分类明细</h4>
-          
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-700">分类明细</h4>
           {!hasAnyAmount ? (
-            <div className="text-center py-6 text-gray-500">
-              <Receipt size={32} className="mx-auto mb-2 text-gray-300" />
+            <div className="text-center py-8 text-gray-500">
+              <Receipt size={40} className="mx-auto mb-2 text-gray-300" />
               <p className="text-sm">暂无发票金额</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {(Object.keys(byCategory) as InvoiceCategory[]).map((category) => (
                 <CategoryItem
                   key={category}
@@ -182,31 +165,6 @@ export function AmountSummary({ total, byCategory, loading = false }: AmountSumm
             </div>
           )}
         </div>
-
-        {/* 汇总验证 - 开发环境下显示，用于验证分类汇总之和等于总金额 */}
-        {process.env.NODE_ENV === 'development' && hasAnyAmount && (
-          <div className="pt-4 border-t border-gray-100">
-            <div className="text-xs text-gray-500 space-y-1">
-              <div className="flex justify-between">
-                <span>分类汇总:</span>
-                <span>
-                  {formatAmount(
-                    Object.values(byCategory).reduce((sum, amount) => sum + amount, 0)
-                  )}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>总金额:</span>
-                <span>{formatAmount(total)}</span>
-              </div>
-              {Math.abs(total - Object.values(byCategory).reduce((sum, amount) => sum + amount, 0)) > 0.01 && (
-                <div className="text-red-500 text-xs">
-                  ⚠️ 金额不匹配，请检查计算逻辑
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
