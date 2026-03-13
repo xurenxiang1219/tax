@@ -1,0 +1,76 @@
+// Prisma Schema for Invoice Reimbursement System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ReimbursementItem {
+  id        String   @id @default(cuid())
+  title     String   @default("未命名报销事项")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  invoices  Invoice[]
+  voucher   PaymentVoucher?
+  
+  @@index([createdAt])
+}
+
+model Invoice {
+  id                  String   @id @default(cuid())
+  fileName            String
+  fileSize            Int
+  fileType            String
+  filePath            String
+  amount              Float?
+  category            String   @default("other")
+  ocrStatus           String   @default("pending")
+  ocrText             String?  @db.Text
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  reimbursementItemId String
+  reimbursementItem   ReimbursementItem @relation(fields: [reimbursementItemId], references: [id], onDelete: Cascade)
+  
+  @@index([reimbursementItemId])
+  @@index([createdAt])
+}
+
+model PaymentVoucher {
+  id                  String   @id @default(cuid())
+  date                String
+  department          String   @default("")
+  paymentMethod       String   @default("bank_transfer")
+  payeeName           String   @default("")
+  bankName            String   @default("")
+  bankAccount         String   @default("")
+  
+  // 分类金额
+  transportation      Float    @default(0)
+  meals               Float    @default(0)
+  accommodation       Float    @default(0)
+  office              Float    @default(0)
+  other               Float    @default(0)
+  
+  // 计算金额
+  subtotal            Float    @default(0)
+  tax                 Float    @default(0)
+  total               Float    @default(0)
+  totalInChinese      String   @default("")
+  
+  // 审批信息（JSON 格式）
+  approvals           String   @default("{}")
+  
+  notes               String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  reimbursementItemId String   @unique
+  reimbursementItem   ReimbursementItem @relation(fields: [reimbursementItemId], references: [id], onDelete: Cascade)
+}

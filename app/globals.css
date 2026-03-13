@@ -1,0 +1,387 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    
+    /* 设计系统自定义颜色 */
+    --primary-blue: 221.2 83.2% 53.3%;
+    --primary-blue-hover: 224 76.3% 48%;
+    --primary-blue-light: 214 100% 97%;
+    
+    --success: 142.1 76.2% 36.3%;
+    --success-light: 138 76% 97%;
+    
+    --warning: 45.4 93.4% 47.5%;
+    --warning-light: 54 91% 95%;
+    
+    --error: 0 84.2% 60.2%;
+    --error-light: 0 93% 94%;
+    
+    --info: 221.2 83.2% 53.3%;
+    --info-light: 214 100% 97%;
+    
+    /* 背景色 */
+    --bg-primary: 0 0% 100%;
+    --bg-secondary: 210 40% 98%;
+    --bg-tertiary: 220 14.3% 95.9%;
+    
+    /* 边框色 */
+    --border-primary: 214.3 31.8% 91.4%;
+    --border-secondary: 220 13% 91%;
+    
+    /* 文字色 */
+    --text-primary: 222.2 84% 4.9%;
+    --text-secondary: 215.4 16.3% 46.9%;
+    --text-tertiary: 215.4 16.3% 65.1%;
+    --text-disabled: 220 13% 91%;
+    
+    /* 发票分类颜色 */
+    --transportation: 217.2 91.2% 59.8%;
+    --meals: 25 95% 53%;
+    --accommodation: 262.1 83.3% 57.8%;
+    --office: 142.1 76.2% 36.3%;
+    --other: 215.4 16.3% 46.9%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    
+    /* 深色模式自定义颜色 */
+    --bg-primary: 222.2 84% 4.9%;
+    --bg-secondary: 217.2 32.6% 17.5%;
+    --bg-tertiary: 215 27.9% 16.9%;
+    
+    --border-primary: 217.2 32.6% 17.5%;
+    --border-secondary: 215 27.9% 16.9%;
+    
+    --text-primary: 210 40% 98%;
+    --text-secondary: 215 20.2% 65.1%;
+    --text-tertiary: 215.4 16.3% 46.9%;
+    --text-disabled: 217.2 32.6% 17.5%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* 打印样式 - 支付证明单专用 */
+@media print {
+  /* 隐藏不需要打印的元素 */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* 发票附件默认隐藏，只有在打印支付证明单和发票时显示 */
+  .invoice-attachments {
+    display: none !important;
+  }
+  
+  /* 当body有print-with-invoices类时显示发票附件 */
+  body.print-with-invoices .invoice-attachments {
+    display: block !important;
+    page-break-before: always !important;
+  }
+  
+  /* 发票卡片样式 */
+  .invoice-attachments .border {
+    border: 2px solid black !important;
+  }
+  
+  /* 发票卡片避免分页断裂 */
+  .page-break-inside-avoid {
+    page-break-inside: avoid !important;
+  }
+  
+  /* 打印时使用白色背景，确保文字清晰 */
+  body {
+    background: white !important;
+    color: black !important;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif !important;
+  }
+  
+  /* 支付证明单容器样式 */
+  .payment-voucher {
+    box-shadow: none !important;
+    border: 2px solid black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  /* 支付证明单标题区域 */
+  .payment-voucher .card-header {
+    border-bottom: 2px solid black !important;
+    padding: 1rem !important;
+    text-align: center !important;
+  }
+  
+  .payment-voucher .card-title {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+  }
+  
+  /* 支付证明单内容区域 */
+  .payment-voucher .card-content {
+    padding: 1.5rem !important;
+  }
+  
+  /* 确保所有表格边框显示 */
+  table, th, td {
+    border: 1px solid black !important;
+    border-collapse: collapse !important;
+  }
+  
+  /* 表格样式优化 */
+  table {
+    width: 100% !important;
+    margin: 0.5rem 0 !important;
+  }
+  
+  /* 表格单元格内边距和对齐 */
+  th, td {
+    padding: 8px 12px !important;
+    vertical-align: middle !important;
+  }
+  
+  th {
+    background-color: #f5f5f5 !important;
+    font-weight: bold !important;
+    text-align: center !important;
+  }
+  
+  /* 金额列右对齐 */
+  td:last-child {
+    text-align: right !important;
+  }
+  
+  /* 避免关键区域分页断裂 */
+  .payment-voucher,
+  .approval-section,
+  .payment-voucher table,
+  .approval-section .grid > div {
+    page-break-inside: avoid !important;
+  }
+  
+  .approval-section {
+    margin-top: 1.5rem !important;
+  }
+  
+  .approval-section .grid > div {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* A4 纸张设置 */
+  @page {
+    size: A4;
+    margin: 1.5cm 1cm;
+    @top-center {
+      content: "支付证明单";
+    }
+  }
+  
+  /* 打印时的字体大小层级 */
+  .payment-voucher h1 {
+    font-size: 24px !important;
+    margin: 0.5rem 0 !important;
+  }
+  
+  .payment-voucher h2 {
+    font-size: 20px !important;
+    margin: 0.5rem 0 !important;
+  }
+  
+  .payment-voucher h3 {
+    font-size: 16px !important;
+    margin: 1rem 0 0.5rem 0 !important;
+    font-weight: bold !important;
+  }
+  
+  .payment-voucher h4 {
+    font-size: 14px !important;
+    margin: 0.75rem 0 0.25rem 0 !important;
+    font-weight: 600 !important;
+  }
+  
+  /* 打印时的间距优化 */
+  .payment-voucher .space-y-8 > * + * {
+    margin-top: 1.5rem !important;
+  }
+  
+  .payment-voucher .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .payment-voucher .space-y-4 > * + * {
+    margin-top: 0.75rem !important;
+  }
+  
+  .payment-voucher .space-y-3 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  
+  .payment-voucher .space-y-2 > * + * {
+    margin-top: 0.25rem !important;
+  }
+  
+  /* 确保重要背景色在打印时显示 */
+  .bg-gray-50,
+  .bg-blue-50,
+  .bg-yellow-50 {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .bg-gray-50 {
+    background-color: #f8f9fa !important;
+  }
+  
+  .bg-blue-50 {
+    background-color: #e3f2fd !important;
+  }
+  
+  .bg-yellow-50 {
+    background-color: #fffbf0 !important;
+  }
+  
+  /* 徽章样式优化 */
+  .payment-voucher .badge {
+    border: 1px solid #ccc !important;
+    padding: 2px 6px !important;
+    font-size: 11px !important;
+    background-color: #f5f5f5 !important;
+    color: black !important;
+  }
+  
+  /* 签字线样式 */
+  .signature-line {
+    border-bottom: 1px solid black !important;
+    min-height: 24px !important;
+    display: inline-block !important;
+    width: 120px !important;
+  }
+  
+  /* 审批区域网格布局优化 */
+  .approval-section .grid {
+    display: block !important;
+  }
+  
+  /* 表单字段打印样式 */
+  .payment-voucher input,
+  .payment-voucher select,
+  .payment-voucher textarea {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+  }
+  
+  /* 标签样式 */
+  .payment-voucher label {
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* 注意事项样式 */
+  .payment-voucher .text-sm {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* 金额显示优化 */
+  .font-mono {
+    font-family: "Consolas", "Liberation Mono", "Menlo", monospace !important;
+  }
+  
+  /* 大写金额区域 */
+  .payment-voucher .bg-yellow-50 {
+    border: 1px solid #d4a574 !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* 小尺寸打印优化 */
+@media print and (max-width: 21cm) {
+  .payment-voucher {
+    font-size: 11px !important;
+  }
+  
+  .payment-voucher table {
+    font-size: 10px !important;
+  }
+  
+  .payment-voucher h1 {
+    font-size: 20px !important;
+  }
+  
+  .payment-voucher h2 {
+    font-size: 18px !important;
+  }
+  
+  .payment-voucher h3 {
+    font-size: 14px !important;
+  }
+  
+  .payment-voucher h4 {
+    font-size: 12px !important;
+  }
+}
